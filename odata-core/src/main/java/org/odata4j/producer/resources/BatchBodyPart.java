@@ -1,8 +1,8 @@
 package org.odata4j.producer.resources;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.producer.resources.ODataBatchProvider.HTTP_METHOD;
 

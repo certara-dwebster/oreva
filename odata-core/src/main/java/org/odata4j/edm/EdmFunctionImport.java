@@ -3,7 +3,7 @@ package org.odata4j.edm;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.HttpMethod;
+import jakarta.ws.rs.HttpMethod;
 
 import org.odata4j.core.ImmutableList;
 

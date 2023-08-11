@@ -3,9 +3,9 @@ package org.odata4j.producer.resources;
 
 import java.net.URI;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ContextResolver;
 
 import org.odata4j.producer.ODataProducer;
 

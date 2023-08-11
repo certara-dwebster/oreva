@@ -1,7 +1,9 @@
 package org.odata4j.examples.jersey.consumer;
 
-import javax.ws.rs.ext.RuntimeDelegate;
+import jakarta.ws.rs.ext.RuntimeDelegate;
 
+import org.glassfish.jersey.internal.AbstractRuntimeDelegate;
+import org.glassfish.jersey.internal.RuntimeDelegateImpl;
 import org.odata4j.consumer.AbstractODataConsumer;
 import org.odata4j.consumer.ODataClient;
 import org.odata4j.consumer.ODataConsumer;
@@ -19,8 +21,8 @@ public class ODataJerseyConsumer extends AbstractODataConsumer {
     super(serviceRootUri);
 
     // ensure that a correct JAX-RS implementation (Jersey, server or default) is loaded
-    if (!(RuntimeDelegate.getInstance() instanceof com.sun.jersey.core.spi.factory.AbstractRuntimeDelegate))
-      RuntimeDelegate.setInstance(new com.sun.ws.rs.ext.RuntimeDelegateImpl());
+    if (!(RuntimeDelegate.getInstance() instanceof AbstractRuntimeDelegate ))
+      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
 
     this.client = new ODataJerseyClient(type, clientFactory, behaviors);
   }

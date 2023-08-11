@@ -3,10 +3,10 @@ package org.odata4j.core;
 import java.net.URI;
 import java.util.List;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.PathSegment;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.exceptions.NotImplementedException;
 import org.odata4j.urlencoder.ConversionUtil;
@@ -50,6 +50,16 @@ public class ODataBatchUriInfo implements UriInfo {
 	@Override
 	public List<Object> getMatchedResources() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public URI resolve(URI uri) {
+		return requestUri.resolve(uri);
+	}
+
+	@Override
+	public URI relativize(URI uri) {
+		return requestUri.relativize(uri);
 	}
 
 	@Override

@@ -2,8 +2,8 @@ package org.odata4j.consumer;
 
 import java.io.InputStream;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 public class ODataClientBatchResponseImpl implements ODataClientBatchResponse {
   final Object entity;

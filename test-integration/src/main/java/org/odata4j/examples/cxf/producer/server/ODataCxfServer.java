@@ -5,8 +5,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Application;
-import javax.ws.rs.ext.RuntimeDelegate;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.ext.RuntimeDelegate;
 
 import org.apache.cxf.jaxrs.servlet.CXFNonSpringJaxrsServlet;
 import org.core4j.Enumerable;
@@ -16,6 +16,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.glassfish.jersey.internal.AbstractRuntimeDelegate;
+import org.glassfish.jersey.internal.RuntimeDelegateImpl;
 import org.odata4j.core.Throwables;
 import org.odata4j.producer.server.ODataServer;
 
@@ -35,8 +37,8 @@ public class ODataCxfServer implements ODataServer {
     this.appBaseUri = appBaseUri;
 
     // ensure that the correct JAX-RS implementation (CXF) is loaded
-    if (!(RuntimeDelegate.getInstance() instanceof org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl))
-      RuntimeDelegate.setInstance(new org.apache.cxf.jaxrs.impl.RuntimeDelegateImpl());
+    if (!(RuntimeDelegate.getInstance() instanceof AbstractRuntimeDelegate))
+      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
   }
 
   public ODataCxfServer(String appBaseUri, Class<? extends Application> odataApp, Class<? extends Application> rootApp) {
@@ -81,7 +83,7 @@ public class ODataCxfServer implements ODataServer {
 
     CXFNonSpringJaxrsServlet odataServlet = new CXFNonSpringJaxrsServlet();
     ServletHolder odataServletHolder = new ServletHolder(odataServlet);
-    odataServletHolder.setInitParameter("javax.ws.rs.Application", odataApp.getCanonicalName());
+    odataServletHolder.setInitParameter("jakarta.ws.rs.Application", odataApp.getCanonicalName());
 
     ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
     contextHandler.addServlet(odataServletHolder, normalizePath(url.getPath()) + "/*");
@@ -89,7 +91,7 @@ public class ODataCxfServer implements ODataServer {
     if (rootApp != null) {
       CXFNonSpringJaxrsServlet rootServlet = new CXFNonSpringJaxrsServlet();
       ServletHolder rootServletHolder = new ServletHolder(rootServlet);
-      rootServletHolder.setInitParameter("javax.ws.rs.Application", rootApp.getCanonicalName());
+      rootServletHolder.setInitParameter("jakarta.ws.rs.Application", rootApp.getCanonicalName());
 
       contextHandler.addServlet(rootServletHolder, "/*");
     }

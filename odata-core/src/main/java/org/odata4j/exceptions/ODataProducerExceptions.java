@@ -3,7 +3,7 @@ package org.odata4j.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.core.Response.StatusType;
+import jakarta.ws.rs.core.Response.StatusType;
 
 import org.odata4j.core.OError;
 import org.odata4j.core.Throwables;

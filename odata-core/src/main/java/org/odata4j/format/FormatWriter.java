@@ -2,7 +2,7 @@ package org.odata4j.format;
 
 import java.io.Writer;
 
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriInfo;
 
 /** Write entities to an output stream in a particular format
  *

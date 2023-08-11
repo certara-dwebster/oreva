@@ -2,7 +2,7 @@ package org.odata4j.format.xml;
 
 import java.io.Writer;
 
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.core.OComplexObject;
 import org.odata4j.core.ODataConstants;

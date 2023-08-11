@@ -3,7 +3,7 @@ package org.odata4j.producer;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OEntityKey;

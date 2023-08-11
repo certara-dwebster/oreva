@@ -15,9 +15,9 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.core4j.Enumerable;
 import org.core4j.Func;

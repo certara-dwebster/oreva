@@ -23,11 +23,11 @@
         <configuration>
           <instructions>
             <Import-Package>
-              javax.persistence;version="[2.0.0,3.0.0)",
-              javax.persistence.metamodel;version="[2.0.0,3.0.0)",
-              javax.ws.rs;version="[1.1.0,2.0.0)",
-              javax.ws.rs.core;version="[1.1.0,2.0.0)",
-              javax.ws.rs.ext;version="[1.1.0,2.0.0)",
+              jakarta.persistence;version="[2.0.0,3.0.0)",
+              jakarta.persistence.metamodel;version="[2.0.0,3.0.0)",
+              jakarta.ws.rs;version="[1.1.0,2.0.0)",
+              jakarta.ws.rs.core;version="[1.1.0,2.0.0)",
+              jakarta.ws.rs.ext;version="[1.1.0,2.0.0)",
               org.core4j;version="[0.5.0,1.0.0)",
               org.joda.time;version="[2.0.0,3.0.0)",
               org.joda.time.format;version="[2.0.0,3.0.0)",
@@ -53,9 +53,9 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>jsr311-api</artifactId>
-      <version>${jsr311.version}</version>
+      <groupId>jakarta.ws.rs</groupId>
+      <artifactId>jakarta.ws.rs-api</artifactId>
+      <version>3.1.0</version>
     </dependency>
     <dependency>
       <groupId>joda-time</groupId>
@@ -98,15 +98,9 @@
       <version>${xmlunit.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- JAX-RS implementation -->
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-core</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
     <!-- client implementation -->
     <dependency>
-      <groupId>com.sun.jersey</groupId>
+      <groupId>org.glassfish.jersey.core</groupId>
       <artifactId>jersey-client</artifactId>
       <version>${jersey.version}</version>
     </dependency>

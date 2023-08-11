@@ -1,50 +1,19 @@
 package org.odata4j.examples.jersey.consumer;
 
-import java.lang.reflect.Field;
-import java.util.Set;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.WebTarget;
+import org.glassfish.jersey.client.ClientConfig;
+import org.odata4j.consumer.behaviors.OClientBehavior;
+import org.odata4j.examples.jersey.consumer.behaviors.JerseyClientBehavior;
+import org.odata4j.urlencoder.ConversionUtil;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.ws.rs.ext.RuntimeDelegate;
-
-import org.odata4j.consumer.behaviors.OClientBehavior;
-import org.odata4j.core.Throwables;
-import org.odata4j.examples.jersey.consumer.behaviors.JerseyClientBehavior;
-import org.odata4j.examples.jersey.internal.StringProvider2;
-import org.odata4j.internal.PlatformUtil;
-
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.core.impl.provider.header.MediaTypeProvider;
-import com.sun.jersey.core.spi.factory.AbstractRuntimeDelegate;
-import com.sun.jersey.spi.HeaderDelegateProvider;
-import org.odata4j.urlencoder.ConversionUtil;
-
 class JerseyClientUtil {
 
-  static {
-    if (PlatformUtil.runningOnAndroid())
-      androidJerseyClientHack();
-  }
-
-  @SuppressWarnings("unchecked")
-  private static void androidJerseyClientHack() {
-    try {
-      RuntimeDelegate rd = RuntimeDelegate.getInstance();
-      Field f = AbstractRuntimeDelegate.class.getDeclaredField("hps");
-      f.setAccessible(true);
-      Set<HeaderDelegateProvider<?>> hps = (Set<HeaderDelegateProvider<?>>) f.get(rd);
-      hps.clear();
-      hps.add(new MediaTypeProvider());
-    } catch (Exception e) {
-      throw Throwables.propagate(e);
-    }
-  }
-
   public static Client newClient(JerseyClientFactory clientFactory, OClientBehavior[] behaviors) {
-    DefaultClientConfig cc = new DefaultClientConfig();
-    cc.getSingletons().add(new StringProvider2());
+    ClientConfig cc = new ClientConfig();
     if (behaviors != null) {
       for (OClientBehavior behavior : behaviors)
       {
@@ -66,8 +35,8 @@ class JerseyClientUtil {
     return client;
   }
 
-  public static WebResource resource(Client client, String url, OClientBehavior[] behaviors) {
-    WebResource resource = client.resource(encodeURl(url));
+  public static WebTarget resource(Client client, String url, OClientBehavior[] behaviors) {
+    WebTarget resource = client.target(encodeURl(url));
     if (behaviors != null)
     {
       for (OClientBehavior behavior : behaviors)

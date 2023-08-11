@@ -7,8 +7,7 @@ import javax.ws.rs.ext.Provider;
 
 import org.odata4j.producer.ODataProducer;
 import org.odata4j.producer.resources.DefaultODataProducerProvider;
-
-import com.sun.jersey.api.core.ResourceConfig;
+import org.glassfish.jersey.server.ResourceConfig;
 
 /**
  * Jersey-specific OData producer provider.

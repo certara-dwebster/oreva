@@ -1,16 +1,17 @@
 package org.odata4j.examples.jersey.consumer.behaviors;
 
+import jakarta.ws.rs.client.ClientRequestFilter;
+import jakarta.ws.rs.core.Configurable;
 import org.odata4j.consumer.behaviors.OClientBehavior;
 
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.filter.Filterable;
+import org.glassfish.jersey.client.ClientConfig;
 
 public interface JerseyClientBehavior extends OClientBehavior {
 
   public void modify(ClientConfig clientConfig);
 
-  public void modifyClientFilters(Filterable client);
+  public void modifyClientFilters(Configurable client);
 
-  public void modifyWebResourceFilters(Filterable webResource);
+  public void modifyWebResourceFilters(Configurable webResource);
 
 }

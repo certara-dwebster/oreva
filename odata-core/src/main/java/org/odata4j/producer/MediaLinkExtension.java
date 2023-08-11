@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 
 import org.core4j.Enumerable;
 import org.odata4j.core.OAtomStreamEntity;
@@ -127,7 +127,7 @@ public class MediaLinkExtension implements OMediaLinkExtension {
 
   /*
    * (non-Javadoc)
-   * @see org.odata4j.producer.OMediaLinkExtension#createMediaLinkEntry(org.odata4j.edm.EdmEntitySet, javax.ws.rs.core.HttpHeaders)
+   * @see org.odata4j.producer.OMediaLinkExtension#createMediaLinkEntry(org.odata4j.edm.EdmEntitySet, jakarta.ws.rs.core.HttpHeaders)
    */
   @Override
   public OEntity createMediaLinkEntry(ODataContext odataContext, EdmEntitySet entitySet, HttpHeaders httpHeaders) {

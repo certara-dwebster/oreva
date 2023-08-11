@@ -1,7 +1,7 @@
 package org.odata4j.producer;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.core.OExtension;
 import org.odata4j.exceptions.ODataProducerException;

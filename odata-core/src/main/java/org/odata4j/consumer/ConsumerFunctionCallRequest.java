@@ -314,8 +314,9 @@ public class ConsumerFunctionCallRequest<T extends OObject>
      return null;
     }
 
-      FormatParser<? extends OObject> parser = FormatParserFactory.getParser(
-          function.getReturnType().isSimple() ? OSimpleObject.class : EdmType.getInstanceType(function.getReturnType()),
+    Class<? extends OObject> returnTypeClass = function.getReturnType().isSimple() ? OSimpleObject.class : EdmType.getInstanceType(function.getReturnType());
+    FormatParser<? extends OObject> parser = FormatParserFactory.getParser(
+            returnTypeClass,
           getClient().getFormatType(),
           new Settings(version, 
               getMetadata(), 

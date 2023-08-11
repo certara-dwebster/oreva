@@ -3,7 +3,7 @@ package org.odata4j.producer.resources;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 /**
  * Abstract OData application.

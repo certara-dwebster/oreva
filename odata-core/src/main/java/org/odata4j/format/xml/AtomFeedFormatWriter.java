@@ -3,8 +3,8 @@ package org.odata4j.format.xml;
 import java.io.Writer;
 import java.util.List;
 
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;

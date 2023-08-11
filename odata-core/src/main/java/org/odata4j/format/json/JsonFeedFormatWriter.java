@@ -1,7 +1,7 @@
 package org.odata4j.format.json;
 
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.core.OEntity;
 import org.odata4j.producer.EntitiesResponse;

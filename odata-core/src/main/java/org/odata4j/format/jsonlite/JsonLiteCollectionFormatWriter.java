@@ -3,7 +3,7 @@
  */
 package org.odata4j.format.jsonlite;
 
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.core.OCollection;
 import org.odata4j.core.OEntity;

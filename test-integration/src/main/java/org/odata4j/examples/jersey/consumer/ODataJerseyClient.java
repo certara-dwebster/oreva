@@ -1,63 +1,41 @@
 package org.odata4j.examples.jersey.consumer;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response.StatusType;
-
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
+import org.glassfish.jersey.client.ClientResponse;
+import org.glassfish.jersey.media.multipart.BodyPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.Invocation;
+import jakarta.ws.rs.client.WebTarget;
 import org.core4j.Enumerable;
 import org.core4j.xml.XDocument;
 import org.core4j.xml.XmlFormat;
-import org.odata4j.consumer.AbstractODataClient;
-import org.odata4j.consumer.ConsumerBatchRequestHelper;
-import org.odata4j.consumer.ODataClientBatchResponse;
-import org.odata4j.consumer.ODataClientRequest;
-import org.odata4j.consumer.ODataClientResponse;
-import org.odata4j.consumer.ODataConsumer;
+import org.glassfish.jersey.message.internal.HttpHeaderReader;
+import org.odata4j.consumer.*;
 import org.odata4j.consumer.behaviors.OClientBehavior;
 import org.odata4j.consumer.behaviors.OClientBehaviors;
-import org.odata4j.core.OBatchSupport;
-import org.odata4j.core.OChangeSetRequest;
-import org.odata4j.core.ODataConstants;
+import org.odata4j.core.*;
 import org.odata4j.core.ODataConstants.Charsets;
-import org.odata4j.core.ODataVersion;
-import org.odata4j.core.OError;
-import org.odata4j.core.OErrors;
-import org.odata4j.core.Throwables;
 import org.odata4j.exceptions.BadRequestException;
 import org.odata4j.exceptions.ODataProducerException;
 import org.odata4j.exceptions.ODataProducerExceptions;
 import org.odata4j.exceptions.ServerErrorException;
-import org.odata4j.format.Entry;
-import org.odata4j.format.FormatParserFactory;
-import org.odata4j.format.FormatType;
-import org.odata4j.format.FormatWriter;
-import org.odata4j.format.FormatWriterFactory;
-import org.odata4j.format.Parameters;
-import org.odata4j.format.SingleLink;
+import org.odata4j.format.*;
 import org.odata4j.internal.BOMWorkaroundReader;
 import org.odata4j.internal.InternalUtil;
 import org.odata4j.stax2.XMLEventReader2;
 import org.odata4j.stax2.util.StaxUtil;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientHandlerException;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.ClientResponse.Status;
-import com.sun.jersey.api.client.PartialRequestBuilder;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.header.reader.HttpHeaderReader;
-import com.sun.jersey.multipart.BodyPart;
-import com.sun.jersey.multipart.MultiPart;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response.StatusType;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * OData client based on Jersey.
@@ -100,12 +78,12 @@ class ODataJerseyClient extends AbstractODataClient {
   public Reader getFeedReader(ODataClientResponse response) {
     ClientResponse clientResponse = ((JerseyClientResponse) response).getClientResponse();
     if (ODataConsumer.dump.responseBody()) {
-      String textEntity = clientResponse.getEntity(String.class);
-      dumpResponseBody(textEntity, clientResponse.getType());
+      String textEntity = clientResponse.readEntity(String.class);
+      dumpResponseBody(textEntity, clientResponse.getMediaType());
       return new BOMWorkaroundReader(new StringReader(textEntity));
     }
 
-    InputStream textEntity = clientResponse.getEntityInputStream();
+    InputStream textEntity = clientResponse.getEntityStream();
     try {
       return new BOMWorkaroundReader(new InputStreamReader(textEntity, Charsets.Upper.UTF_8));
     } catch (Exception e) {
@@ -114,8 +92,8 @@ class ODataJerseyClient extends AbstractODataClient {
   }
 
   public String requestBody(FormatType formatType, ODataClientRequest request) throws ODataProducerException {
-    ODataClientResponse response = doRequest(formatType, request, Status.OK);
-    String entity = ((JerseyClientResponse) response).getClientResponse().getEntity(String.class);
+    ODataClientResponse response = doRequest(formatType, request, Response.Status.OK);
+    String entity = ((JerseyClientResponse) response).getClientResponse().readEntity(String.class);
     response.close();
     return entity;
   }
@@ -138,8 +116,8 @@ class ODataJerseyClient extends AbstractODataClient {
         batchRequest = behavior.transform(batchRequest);
     }
 
-    WebResource webResource = JerseyClientUtil.resource(client, batchRequest.getUrl(), behaviors);
-    WebResource.Builder b = webResource.getRequestBuilder();
+    WebTarget webResource = JerseyClientUtil.resource(client, batchRequest.getUrl(), behaviors);
+    Invocation.Builder b = webResource.request();
     String boundary = null;
     String cType = null;
 
@@ -176,31 +154,23 @@ class ODataJerseyClient extends AbstractODataClient {
     }
 
     String entity = sb.toString();
-    b.entity(entity, cType);
 
     if (ODataConsumer.dump.requestBody()) {
       dump(entity);
     }
 
     // execute request
-    ClientResponse response = null;
-    try {
-      response = b.method(batchRequest.getMethod(), ClientResponse.class);
-      Integer status = response.getStatus();
-      String responseContentType = response.getHeaders().getFirst(ODataConstants.Headers.CONTENT_TYPE);
-      MediaType mType = getMediaType(responseContentType);
-      // check the response if it is multi part, if not, an error occured, throw exception
-      if (!mType.isCompatible(MULTIPART_BASE_TYPE)) {
-        String errMsg = response.getEntity(String.class);
-        OError error = OErrors.error(status.toString(), errMsg, null);
-        throw new ServerErrorException.Factory().createException(error);
-      }
-
-      result = parseResponse(response, childRequests);
-
-    } catch (ClientHandlerException e) {
-      Throwables.propagate(e);
+    ClientResponse response = b.method(batchRequest.getMethod(), Entity.entity(entity, cType), ClientResponse.class);
+    Integer status = response.getStatus();
+    String responseContentType = response.getHeaders().getFirst(ODataConstants.Headers.CONTENT_TYPE);
+    MediaType mType = getMediaType(responseContentType);
+    // check the response if it is multi part, if not, an error occured, throw exception
+    if (!mType.isCompatible(MULTIPART_BASE_TYPE)) {
+      String errMsg = response.readEntity(String.class);
+      OError error = OErrors.error(status.toString(), errMsg, null);
+      throw new ServerErrorException.Factory().createException(error);
     }
+    result = parseResponse(response, childRequests);
 
     return result;
   }
@@ -210,7 +180,7 @@ class ODataJerseyClient extends AbstractODataClient {
     ODataVersion version = InternalUtil.getDataServiceVersion(response.getHeaders()
         .getFirst(ODataConstants.Headers.DATA_SERVICE_VERSION));
 
-    MultiPart mp = response.getEntity(MultiPart.class); // input stream can only be consumed once
+    MultiPart mp = response.readEntity(MultiPart.class); // input stream can only be consumed once
 
     // this is the list will hold individual request result.
     List<ODataClientBatchResponse> batchResultList = new ArrayList<ODataClientBatchResponse>(childRequests.size());
@@ -254,17 +224,17 @@ class ODataJerseyClient extends AbstractODataClient {
       for (OClientBehavior behavior : behaviors)
         request = behavior.transform(request);
     }
-    if(request.getPayload() != null && request.getPayload() instanceof InputStream) {
-    	 this.client.setChunkedEncodingSize(setClientChunKSize());
-    }
+//    if(request.getPayload() != null && request.getPayload() instanceof InputStream) {
+//    	 this.client.setChunkedEncodingSize(setClientChunKSize());
+//    }
 
-    WebResource webResource = JerseyClientUtil.resource(client, request.getUrl(), behaviors);
+    WebTarget webResource = JerseyClientUtil.resource(client, request.getUrl(), behaviors);
 
     // set query params
     for (String qpn : request.getQueryParams().keySet())
       webResource = webResource.queryParam(qpn, request.getQueryParams().get(qpn));
 
-    WebResource.Builder b = webResource.getRequestBuilder();
+    Invocation.Builder b = webResource.request();
 
     // set headers
     b = b.accept(reqType.getAcceptableMediaTypes());
@@ -278,6 +248,7 @@ class ODataJerseyClient extends AbstractODataClient {
       dumpHeaders(request, webResource, b);
 
     // request body
+    Entity payloadEntity = null;
     if (request.getPayload() != null) {
 
       Class<?> payloadClass;
@@ -297,7 +268,7 @@ class ODataJerseyClient extends AbstractODataClient {
         String contentType = request.getHeaders().containsKey(ODataConstants.Headers.CONTENT_TYPE)
             ? request.getHeaders().get(ODataConstants.Headers.CONTENT_TYPE)
             : ODataConstants.APPLICATION_OCTET_STREAM;
-        b.entity(request.getPayload(), contentType);
+        payloadEntity = Entity.entity(request.getPayload(), contentType);
       } else {
         StringWriter sw = new StringWriter();
         FormatWriter<Object> fw = (FormatWriter<Object>)
@@ -313,31 +284,26 @@ class ODataJerseyClient extends AbstractODataClient {
             ? request.getHeaders().get(ODataConstants.Headers.CONTENT_TYPE)
             : fw.getContentType();
 
-        b.entity(entity, contentType);
+        payloadEntity = Entity.entity(entity, contentType);
       }
     }
 
     // execute request
-    ClientResponse response = null;
-    try {
-      response = b.method(request.getMethod(), ClientResponse.class);
-    } catch (ClientHandlerException e) {
-      Throwables.propagate(e);
-    }
+    ClientResponse response = b.method(request.getMethod(), payloadEntity, ClientResponse.class);
 
     if (ODataConsumer.dump.responseHeaders())
       dumpHeaders(response);
-    StatusType status = response.getClientResponseStatus();
+    StatusType status = response.getStatusInfo();
     for (StatusType expStatus : expectedResponseStatus)
       if (expStatus.getStatusCode() == status.getStatusCode())
         return new JerseyClientResponse(response);
 
     // the server responded with an unexpected status
     RuntimeException exception;
-    String textEntity = response.getEntity(String.class); // input stream can only be consumed once
+    String textEntity = response.readEntity(String.class); // input stream can only be consumed once
     try {
       // report error as ODataProducerException in case we get a well-formed OData error...
-      MediaType contentType = response.getType();
+      MediaType contentType = response.getMediaType();
       OError error = FormatParserFactory.getParser(OError.class, contentType, null).parse(new StringReader(textEntity));
       exception = ODataProducerExceptions.create(status, error);
     } catch (RuntimeException e) {
@@ -352,12 +318,12 @@ class ODataJerseyClient extends AbstractODataClient {
     ClientResponse clientResponse = ((JerseyClientResponse) response).getClientResponse();
 
     if (ODataConsumer.dump.responseBody()) {
-      String textEntity = clientResponse.getEntity(String.class);
-      dumpResponseBody(textEntity, clientResponse.getType());
+      String textEntity = clientResponse.readEntity(String.class);
+      dumpResponseBody(textEntity, clientResponse.getMediaType());
       return StaxUtil.newXMLEventReader(new BOMWorkaroundReader(new StringReader(textEntity)));
     }
 
-    InputStream textEntity = clientResponse.getEntityInputStream();
+    InputStream textEntity = clientResponse.getEntityStream();
     try {
       return StaxUtil.newXMLEventReader(new BOMWorkaroundReader(new InputStreamReader(textEntity, Charsets.Upper.UTF_8)));
     } catch (Exception e) {
@@ -383,23 +349,23 @@ class ODataJerseyClient extends AbstractODataClient {
   private static boolean dontTryRequestHeaders;
 
   @SuppressWarnings("unchecked")
-  private MultivaluedMap<String, Object> getRequestHeaders(WebResource.Builder b) {
-    if (dontTryRequestHeaders)
-      return null;
-
+  private MultivaluedMap<String, Object> getRequestHeaders(Invocation.Builder b) {
+//    if (dontTryRequestHeaders)
+//      return null;
+//
     //  protected MultivaluedMap<String, Object> metadata;
-    try {
-      Field f = PartialRequestBuilder.class.getDeclaredField("metadata");
-      f.setAccessible(true);
-      return (MultivaluedMap<String, Object>) f.get(b);
-    } catch (Exception e) {
+//    try {
+//      Field f = PartialRequestBuilder.class.getDeclaredField("metadata");
+//      f.setAccessible(true);
+//      return (MultivaluedMap<String, Object>) f.get(b);
+//    } catch (Exception e) {
       dontTryRequestHeaders = true;
       return null;
-    }
-
+//    }
+//
   }
 
-  private void dumpHeaders(ODataClientRequest request, WebResource webResource, WebResource.Builder b) {
+  private void dumpHeaders(ODataClientRequest request, WebTarget webResource, Invocation.Builder b) {
     dump(request.getMethod() + " " + webResource);
     dump(getRequestHeaders(b));
   }

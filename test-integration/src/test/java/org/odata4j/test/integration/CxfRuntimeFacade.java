@@ -7,8 +7,8 @@ import java.io.InputStreamReader;
 import java.util.Hashtable;
 import java.util.Map;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;

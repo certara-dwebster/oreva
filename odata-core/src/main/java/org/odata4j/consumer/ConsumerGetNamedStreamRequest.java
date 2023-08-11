@@ -2,7 +2,7 @@ package org.odata4j.consumer;
 
 import java.io.InputStream;
 
-import javax.ws.rs.core.Response.StatusType;
+import jakarta.ws.rs.core.Response.StatusType;
 
 import org.odata4j.core.OEntity;
 import org.odata4j.core.OErrors;

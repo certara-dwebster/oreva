@@ -3,8 +3,8 @@ package org.odata4j.exceptions;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.Response.StatusType;
+import jakarta.ws.rs.core.Response.Status;
+import jakarta.ws.rs.core.Response.StatusType;
 
 import org.odata4j.core.OError;
 import org.odata4j.core.OErrors;

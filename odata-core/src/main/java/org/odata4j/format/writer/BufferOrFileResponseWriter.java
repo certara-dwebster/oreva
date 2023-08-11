@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.odata4j.core.ODataConstants;
 import org.odata4j.internal.InternalUtil;
 
-import com.sun.jersey.core.util.ReaderWriter;
+import org.glassfish.jersey.message.internal.ReaderWriter;
 
 public class BufferOrFileResponseWriter extends Writer {
 

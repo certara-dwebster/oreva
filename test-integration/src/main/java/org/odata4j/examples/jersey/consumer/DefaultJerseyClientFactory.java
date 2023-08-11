@@ -1,7 +1,9 @@
 package org.odata4j.examples.jersey.consumer;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.config.ClientConfig;
+import jakarta.ws.rs.client.Client;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.JerseyClient;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 
 /**
  * The default factory implementation for Jersey clients.
@@ -19,8 +21,7 @@ public class DefaultJerseyClientFactory implements JerseyClientFactory {
    */
   @Override
   public Client createClient(ClientConfig clientConfig) {
-    Client client = Client.create(clientConfig);
-
+    JerseyClient client = JerseyClientBuilder.createClient(clientConfig);
     return client;
   }
 

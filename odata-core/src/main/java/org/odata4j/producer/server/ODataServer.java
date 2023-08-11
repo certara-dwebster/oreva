@@ -1,6 +1,6 @@
 package org.odata4j.producer.server;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import org.odata4j.producer.resources.AbstractODataApplication;
 import org.odata4j.producer.resources.DefaultODataApplication;

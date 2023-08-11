@@ -1,6 +1,6 @@
 package org.odata4j.format.jsonlite;
 
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.format.json.JsonWriter;
 import org.odata4j.producer.PropertyResponse;

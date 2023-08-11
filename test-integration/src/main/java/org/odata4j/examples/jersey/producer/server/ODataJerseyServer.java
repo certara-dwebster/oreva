@@ -1,10 +1,5 @@
 package org.odata4j.examples.jersey.producer.server;
 
-import static com.sun.jersey.api.core.ResourceConfig.FEATURE_TRACE;
-import static com.sun.jersey.api.core.ResourceConfig.PROPERTY_CONTAINER_REQUEST_FILTERS;
-import static com.sun.jersey.api.core.ResourceConfig.PROPERTY_CONTAINER_RESPONSE_FILTERS;
-import static com.sun.jersey.api.core.ResourceConfig.PROPERTY_RESOURCE_FILTER_FACTORIES;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,20 +10,21 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import javax.ws.rs.core.Application;
-import javax.ws.rs.ext.RuntimeDelegate;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.ext.RuntimeDelegate;
 
 import org.core4j.CoreUtils;
 import org.core4j.Enumerable;
+import org.glassfish.jersey.internal.AbstractRuntimeDelegate;
+import org.glassfish.jersey.internal.RuntimeDelegateImpl;
+import org.glassfish.jersey.server.ContainerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.TestProperties;
 import org.odata4j.core.Throwables;
 import org.odata4j.producer.server.ODataServer;
 
-import com.sun.jersey.api.container.ContainerFactory;
-import com.sun.jersey.api.container.httpserver.HttpServerFactory;
-import com.sun.jersey.api.core.ApplicationAdapter;
-import com.sun.jersey.spi.container.ContainerRequestFilter;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
-import com.sun.jersey.spi.container.ResourceFilterFactory;
 import com.sun.net.httpserver.Authenticator;
 import com.sun.net.httpserver.Filter;
 import com.sun.net.httpserver.HttpContext;
@@ -58,8 +54,8 @@ public class ODataJerseyServer implements ODataServer {
     this.appBaseUri = appBaseUri;
 
     // ensure that the correct JAX-RS implementation (Jersey, server) is loaded
-    if (!(RuntimeDelegate.getInstance() instanceof com.sun.jersey.server.impl.provider.RuntimeDelegateImpl))
-      RuntimeDelegate.setInstance(new com.sun.jersey.server.impl.provider.RuntimeDelegateImpl());
+    if (!(RuntimeDelegate.getInstance() instanceof AbstractRuntimeDelegate))
+      RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
   }
 
   public ODataJerseyServer(String appBaseUri, Class<? extends Application> odataApp, Class<? extends Application> rootApp) {
@@ -90,14 +86,9 @@ public class ODataJerseyServer implements ODataServer {
     return this;
   }
 
-  public <T extends ResourceFilterFactory> ODataJerseyServer addJerseyResourceFilter(Class<T> filter) {
-    jerseyResourceFilters.add(filter.getName());
-    return this;
-  }
-
   /** Enabling this feature can be useful in tracking down issues related to selecting the resource class */
   public ODataJerseyServer setJerseyTrace(boolean enabled) {
-    return setJerseyFeature(FEATURE_TRACE, enabled);
+    return setJerseyFeature(TestProperties.LOG_TRAFFIC, enabled);
   }
 
   public ODataJerseyServer setJerseyFeature(String feature, boolean value) {
@@ -148,21 +139,21 @@ public class ODataJerseyServer implements ODataServer {
     if (odataApp == null)
       throw new RuntimeException("ODataApplication not set");
 
-    try {
+//    try {
       Map<String, Object> propertiesAndFeatures = buildPropertiesAndFeatures();
 
-      // create resource config/ application adapter for app context
-      ApplicationAdapter odataAppAdapter = new ApplicationAdapter(odataApp.newInstance());
-      odataAppAdapter.setPropertiesAndFeatures(propertiesAndFeatures);
-      server = HttpServerFactory.create(appBaseUri, odataAppAdapter);
-
-      // create resource config/ application adapter for root context (if necessary)
-      if (rootApp != null) {
-        ApplicationAdapter rootAppAdapter = new ApplicationAdapter(rootApp.newInstance());
-        rootAppAdapter.setPropertiesAndFeatures(propertiesAndFeatures);
-        HttpHandler rootHttpHandler = ContainerFactory.createContainer(HttpHandler.class, rootAppAdapter);
-        server.createContext("/", rootHttpHandler);
-      }
+//      // create resource config/ application adapter for app context
+//      ApplicationAdapter odataAppAdapter = new ApplicationAdapter(odataApp.newInstance());
+//      odataAppAdapter.setPropertiesAndFeatures(propertiesAndFeatures);
+//      server = HttpServerFactory.create(appBaseUri, odataAppAdapter);
+//
+//      // create resource config/ application adapter for root context (if necessary)
+//      if (rootApp != null) {
+//        ApplicationAdapter rootAppAdapter = new ApplicationAdapter(rootApp.newInstance());
+//        rootAppAdapter.setPropertiesAndFeatures(propertiesAndFeatures);
+//        HttpHandler rootHttpHandler = ContainerFactory.createContainer(HttpHandler.class, rootAppAdapter);
+//        server.createContext("/", rootHttpHandler);
+//      }
 
       // initialize all contexts
       for (HttpContext context : getHttpContexts())
@@ -173,13 +164,13 @@ public class ODataJerseyServer implements ODataServer {
 
       LOG.info(String.format("Jersey app started with WADL available at %sapplication.wadl\n", appBaseUri));
       return this;
-    } catch (IOException e) {
-      throw Throwables.propagate(e);
-    } catch (InstantiationException e) {
-      throw Throwables.propagate(e);
-    } catch (IllegalAccessException e) {
-      throw Throwables.propagate(e);
-    }
+////    } catch (IOException e) {
+////      throw Throwables.propagate(e);
+//    } catch (InstantiationException e) {
+//      throw Throwables.propagate(e);
+//    } catch (IllegalAccessException e) {
+//      throw Throwables.propagate(e);
+//    }
   }
 
   protected HttpServer getHttpServer() {
@@ -188,9 +179,9 @@ public class ODataJerseyServer implements ODataServer {
 
   protected Map<String, Object> buildPropertiesAndFeatures() {
     Map<String, Object> propertiesAndFeatures = new HashMap<String, Object>();
-    propertiesAndFeatures.put(PROPERTY_CONTAINER_REQUEST_FILTERS, Enumerable.create(jerseyRequestFilters).toArray(String.class));
-    propertiesAndFeatures.put(PROPERTY_CONTAINER_RESPONSE_FILTERS, Enumerable.create(jerseyResponseFilters).toArray(String.class));
-    propertiesAndFeatures.put(PROPERTY_RESOURCE_FILTER_FACTORIES, Enumerable.create(jerseyResourceFilters).toArray(String.class));
+//    propertiesAndFeatures.put(PROPERTY_CONTAINER_REQUEST_FILTERS, Enumerable.create(jerseyRequestFilters).toArray(String.class));
+//    propertiesAndFeatures.put(PROPERTY_CONTAINER_RESPONSE_FILTERS, Enumerable.create(jerseyResponseFilters).toArray(String.class));
+//    propertiesAndFeatures.put(PROPERTY_RESOURCE_FILTER_FACTORIES, Enumerable.create(jerseyResourceFilters).toArray(String.class));
     propertiesAndFeatures.putAll(jerseyFeatures);
     return propertiesAndFeatures;
   }

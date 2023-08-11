@@ -1,5 +1,8 @@
 package org.odata4j.examples.jersey.internal;
 
+import org.glassfish.jersey.message.internal.AbstractMessageReaderWriterProvider;
+import org.glassfish.jersey.message.internal.ReaderWriter;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,13 +12,10 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-
-import com.sun.jersey.core.provider.AbstractMessageReaderWriterProvider;
-import com.sun.jersey.core.util.ReaderWriter;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 @Produces({ "text/plain", "*/*" })
 @Consumes({ "text/plain", "*/*" })

@@ -10,7 +10,7 @@ import org.odata4j.core.OError;
  * {@link OError} is wrapped into an exception and thrown via the consumer API.</p>
  *
  * @param <T>  the concrete sub-class of {@link ODataProducerException} created
- * @see ODataProducerExceptions#create(javax.ws.rs.core.Response.StatusType, OError)
+ * @see ODataProducerExceptions#create(jakarta.ws.rs.core.Response.StatusType, OError)
  */
 public interface ExceptionFactory<T extends ODataProducerException> {
 

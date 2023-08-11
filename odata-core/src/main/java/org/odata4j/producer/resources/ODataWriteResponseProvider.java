@@ -6,17 +6,17 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyWriter;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.ext.MessageBodyWriter;
+import jakarta.ws.rs.ext.Provider;
 
 import org.odata4j.core.ODataConstants;
 import org.odata4j.format.writer.BufferOrFileResponseHolder;
 
-import com.sun.jersey.core.util.ReaderWriter;
+import org.glassfish.jersey.message.internal.ReaderWriter;
 
 @Provider
 @Produces({ ODataConstants.APPLICATION_ATOM_XML_CHARSET_UTF8, ODataConstants.APPLICATION_XML_CHARSET_UTF8, ODataConstants.APPLICATION_JAVASCRIPT_VERBOSE_CHARSET_UTF8, ODataConstants.TEXT_JAVASCRIPT_CHARSET_UTF8 })

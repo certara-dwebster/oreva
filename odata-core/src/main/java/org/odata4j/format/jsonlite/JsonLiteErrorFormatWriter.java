@@ -2,7 +2,7 @@ package org.odata4j.format.jsonlite;
 
 import java.io.Writer;
 
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.UriInfo;
 
 import org.odata4j.core.OError;
 import org.odata4j.format.FormatWriter;
